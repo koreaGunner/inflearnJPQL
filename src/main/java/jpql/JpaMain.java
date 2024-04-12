@@ -47,11 +47,19 @@ public class JpaMain {
             //query2.setParameter("username", "member1");
             //Member singleResult = query2.getSingleResult();
             // ->
-            Member result = em.createQuery("select m from Member m where m.username = :username", Member.class)
-                    .setParameter("username", "member1")
-                    .getSingleResult();
-            System.out.println("result = " + result.getUsername());
+//            Member result = em.createQuery("select m from Member m where m.username = :username", Member.class)
+//                    .setParameter("username", "member1")
+//                    .getSingleResult();
+//            System.out.println("result = " + result.getUsername());
 
+
+            List<MemberDTO> result = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
+                    .getResultList();
+
+            MemberDTO memberDTO = result.get(0);
+            System.out.println("memberDTO.getUsername() = " + memberDTO.getUsername());
+            System.out.println("memberDTO.getAge() = " + memberDTO.getAge());
+            
 
             tx.commit();
         } catch (Exception e) {
