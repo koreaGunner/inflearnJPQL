@@ -88,19 +88,21 @@ public class JpaMain {
 
 
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
 
-            Member member = new Member();
-            member.setUsername("teamA");
-            member.setAge(10);
-            member.changeTeam(team);
 
-            em.persist(member);
-
-            em.flush();
-            em.clear();
+//            Team team = new Team();
+//            team.setName("teamA");
+//            em.persist(team);
+//
+//            Member member = new Member();
+//            member.setUsername("teamA");
+//            member.setAge(10);
+//            member.changeTeam(team);
+//
+//            em.persist(member);
+//
+//            em.flush();
+//            em.clear();
 
             //inner join
 //            String query = "select m from Member m inner join m.team t";
@@ -115,14 +117,30 @@ public class JpaMain {
 //            String query = "select m from Member m left join m.team t on t.name = 'teamA'";
             
             //연관관계 없는 엔티티 외부 조인(left 빼면 내부조인)
-            String query = "select m from Member m left join Team t on m.username = t.name";
+//            String query = "select m from Member m left join Team t on m.username = t.name";
+//            List<Member> result = em.createQuery(query, Member.class)
+//                    .getResultList();
+//            System.out.println("result = " + result);
+//            for (Member member1 : result) {
+//                System.out.println("member1.getUsername() = " + member1.getUsername());
+//                System.out.println("member1.getTeam().getName() = " + member1.getTeam().getName());
+//            }
+
+
+            
+
+            //jpql은 select에서 서브쿼리는 가능하나, from에서 서브쿼리는 불가능(조인으로 풀 수 있으면 풀어서 해결)
+            String query = "select (select avg(m1.age) from Member m1) as avgAge from Member m left join Team t on m.username = t.name";
             List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
-            System.out.println("result = " + result);
-            for (Member member1 : result) {
-                System.out.println("member1.getUsername() = " + member1.getUsername());
-                System.out.println("member1.getTeam().getName() = " + member1.getTeam().getName());
-            }
+            System.out.println(result.size());
+
+
+
+
+
+
+
 
 
 
