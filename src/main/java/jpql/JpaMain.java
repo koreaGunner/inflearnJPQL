@@ -63,24 +63,68 @@ public class JpaMain {
 //            System.out.println("memberDTO.getAge() = " + memberDTO.getAge());
 
 
-            for (int i = 0; i < 100; i++) {
-                Member member = new Member();
-                member.setUsername("member" + i);
-                member.setAge(i);
-                em.persist(member);
-            }
 
 
 
-            List<Member> result = em.createQuery("select m from Member m order by m.age desc", Member.class)
-                    .setFirstResult(0)
-                    .setMaxResults(10)
+//            for (int i = 0; i < 100; i++) {
+//                Member member = new Member();
+//                member.setUsername("member" + i);
+//                member.setAge(i);
+//                em.persist(member);
+//            }
+//
+//
+//
+//            List<Member> result = em.createQuery("select m from Member m order by m.age desc", Member.class)
+//                    .setFirstResult(0)
+//                    .setMaxResults(10)
+//                    .getResultList();
+//
+//            System.out.println("result.size() = " + result.size());
+//            for (Member member1 : result) {
+//                System.out.println("member1 = " + member1);
+//            }
+
+
+
+
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("teamA");
+            member.setAge(10);
+            member.changeTeam(team);
+
+            em.persist(member);
+
+            em.flush();
+            em.clear();
+
+            //inner join
+//            String query = "select m from Member m inner join m.team t";
+
+            //outer join(outer 생략 가능)
+//            String query = "select m from Member m left outer join m.team t";
+            
+            //세타조인(막조인)
+//            String query = "select m from Member m, Team t where m.username = t.name";
+            
+            //조인 대상 필터링
+//            String query = "select m from Member m left join m.team t on t.name = 'teamA'";
+            
+            //연관관계 없는 엔티티 외부 조인(left 빼면 내부조인)
+            String query = "select m from Member m left join Team t on m.username = t.name";
+            List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
-
-            System.out.println("result.size() = " + result.size());
+            System.out.println("result = " + result);
             for (Member member1 : result) {
-                System.out.println("member1 = " + member1);
+                System.out.println("member1.getUsername() = " + member1.getUsername());
+                System.out.println("member1.getTeam().getName() = " + member1.getTeam().getName());
             }
+
+
 
 
             tx.commit();
