@@ -301,27 +301,29 @@ public class JpaMain {
 
 
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
 
-            Member member = new Member();
-            member.setUsername("member");
-            member.setAge(10);
-            member.setType(MemberType.ADMIN);
-            member.changeTeam(team);
 
-            Member member1 = new Member();
-            member1.setUsername("관리자");
-            member1.setAge(20);
-            member1.setType(MemberType.USER);
-            member1.changeTeam(team);
-
-            em.persist(member);
-            em.persist(member1);
-
-            em.flush();
-            em.clear();
+//            Team team = new Team();
+//            team.setName("teamA");
+//            em.persist(team);
+//
+//            Member member = new Member();
+//            member.setUsername("member");
+//            member.setAge(10);
+//            member.setType(MemberType.ADMIN);
+//            member.changeTeam(team);
+//
+//            Member member1 = new Member();
+//            member1.setUsername("관리자");
+//            member1.setAge(20);
+//            member1.setType(MemberType.USER);
+//            member1.changeTeam(team);
+//
+//            em.persist(member);
+//            em.persist(member1);
+//
+//            em.flush();
+//            em.clear();
   
               //단일 값 연관 경로
 //            String query = "select m.team from Member m"; //묵시적 내부조인(inner join) 발생, 추가 탐색 O
@@ -345,11 +347,80 @@ public class JpaMain {
 //            }
             
             //-> 해결방법(묵시적 조인을 쓰면 안되고 무조건 명시적 조인을 쓸 것)
-            String query = "select m.username from Team t join t.members m"; //from 절에서 명시적 조인을 통해 별칭을 얻으면 추가 탐색 가능
-            List<String> result = em.createQuery(query, String.class).getResultList();
-            for (String s : result) {
-                System.out.println("s = " + s);
+//            String query = "select m.username from Team t join t.members m"; //from 절에서 명시적 조인을 통해 별칭을 얻으면 추가 탐색 가능
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+
+            Team team1 = new Team();
+            team1.setName("teamA");
+            em.persist(team1);
+
+            Team team2 = new Team();
+            team2.setName("teamB");
+            em.persist(team2);
+
+            Team team3 = new Team();
+            team3.setName("teamC");
+            em.persist(team3);
+
+            Member member1 = new Member();
+            member1.setUsername("회원1");
+            member1.changeTeam(team1);
+
+            Member member2 = new Member();
+            member2.setUsername("회원2");
+            member2.changeTeam(team1);
+
+            Member member3 = new Member();
+            member3.setUsername("회원3");
+            member3.changeTeam(team2);
+
+            Member member4 = new Member();
+            member4.setUsername("회원4");
+
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+            em.persist(member4);
+
+            em.flush();
+            em.clear();
+            
+            //패치 조인(FetchType.LAZY여도 즉시 조인문 쿼리가 날아감)
+//            String query = "select m from Member m join fetch m.team";
+//            List<Member> result = em.createQuery(query, Member.class).getResultList();
+//            for (Member member : result) {
+//                System.out.println("member = " + member);
+//                System.out.println("member.getUsername() = " + member.getUsername());
+//                System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
+//            }
+            
+            //컬렉션 패치 조인(일대다 관계, 컬렉션 패치 조인) : 데이터가 뻥튀기 될 수도 있다.(로컬에선 안되고 있음)
+//            String query = "select t from Team t join fetch t.members";
+//            List<Team> result = em.createQuery(query, Team.class).getResultList();
+//            for (Team team : result) {
+//                System.out.println("team.getName() = " + team.getName() + " || " + team.getMembers().size());
+//                for(Member member : team.getMembers()) {
+//                    System.out.println("-> member.getUsername() = " + member.getUsername());
+//                }
+//            }
+
+            //컬렉션 패치 조인(일대다 관계, 컬렉션 패치 조인)
+            // -> distinct(db에선 완전 똑같은 row일 때만 적용) 추가
+            // -> 그러나 jpa가 어플리케이션 단계에서 한번 더 걸러준다(jpa distinct)
+            String query = "select distinct t from Team t join fetch t.members";
+            List<Team> result = em.createQuery(query, Team.class).getResultList();
+            for (Team team : result) {
+                System.out.println("team.getName() = " + team.getName() + " || " + team.getMembers().size());
+                for(Member member : team.getMembers()) {
+                    System.out.println("-> member.getUsername() = " + member.getUsername());
+                }
             }
+
 
             tx.commit();
         } catch (Exception e) {
