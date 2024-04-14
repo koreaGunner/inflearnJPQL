@@ -130,19 +130,51 @@ public class JpaMain {
             
 
             //jpql은 select에서 서브쿼리는 가능하나, from에서 서브쿼리는 불가능(조인으로 풀 수 있으면 풀어서 해결)
-            String query = "select (select avg(m1.age) from Member m1) as avgAge from Member m left join Team t on m.username = t.name";
-            List<Member> result = em.createQuery(query, Member.class)
+//            String query = "select (select avg(m1.age) from Member m1) as avgAge from Member m left join Team t on m.username = t.name";
+//            List<Member> result = em.createQuery(query, Member.class)
+//                    .getResultList();
+//            System.out.println(result.size());
+
+
+
+
+
+
+
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("teamA");
+            member.setAge(10);
+            member.setType(MemberType.ADMIN);
+            member.changeTeam(team);
+
+            em.persist(member);
+
+            em.flush();
+            em.clear();
+
+            //JPQL 타입 표현
+//            String query = "select m.username, 'HELLO', true From Member m";
+
+            //Enum class 표현
+//            String query = "select m.username, 'HELLO', true From Member m " +
+//                           "where m.type = jpql.MemberType.USER";
+
+            //Enum class 파라미터
+            String query = "select m.username, 'HELLO', true From Member m " +
+                    "where m.type = :userType";
+            List<Object[]> result = em.createQuery(query)
+                    .setParameter("userType", MemberType.ADMIN)
                     .getResultList();
-            System.out.println(result.size());
 
-
-
-
-
-
-
-
-
+            for (Object[] objects : result) {
+                System.out.println("objects[0] = " + objects[0]);
+                System.out.println("objects[1] = " + objects[1]);
+                System.out.println("objects[2] = " + objects[2]);
+            }
 
 
             tx.commit();
