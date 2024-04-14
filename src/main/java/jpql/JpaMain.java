@@ -141,39 +141,95 @@ public class JpaMain {
 
 
 
+//            Team team = new Team();
+//            team.setName("teamA");
+//            em.persist(team);
+//
+//            Member member = new Member();
+//            member.setUsername("teamA");
+//            member.setAge(10);
+//            member.setType(MemberType.ADMIN);
+//            member.changeTeam(team);
+//
+//            em.persist(member);
+//
+//            em.flush();
+//            em.clear();
+//
+//            //JPQL 타입 표현
+////            String query = "select m.username, 'HELLO', true From Member m";
+//
+//            //Enum class 표현
+////            String query = "select m.username, 'HELLO', true From Member m " +
+////                           "where m.type = jpql.MemberType.USER";
+//
+//            //Enum class 파라미터
+//            String query = "select m.username, 'HELLO', true From Member m " +
+//                    "where m.type = :userType";
+//            List<Object[]> result = em.createQuery(query)
+//                    .setParameter("userType", MemberType.ADMIN)
+//                    .getResultList();
+//
+//            for (Object[] objects : result) {
+//                System.out.println("objects[0] = " + objects[0]);
+//                System.out.println("objects[1] = " + objects[1]);
+//                System.out.println("objects[2] = " + objects[2]);
+//            }
+
+
+
+
+
+
+
+
             Team team = new Team();
             team.setName("teamA");
             em.persist(team);
 
             Member member = new Member();
-            member.setUsername("teamA");
+            member.setUsername("member");
             member.setAge(10);
             member.setType(MemberType.ADMIN);
             member.changeTeam(team);
 
+            Member member1 = new Member();
+            member1.setUsername(null);
+            member1.setAge(20);
+            member1.setType(MemberType.USER);
+            member1.changeTeam(team);
+
             em.persist(member);
+            em.persist(member1);
 
             em.flush();
             em.clear();
+            
+            //case문
+//            String query = "select "
+//                         + "case when m.age <= 10 then '학생요금'"
+//                         + "     when m.age >= 60 then '경로요금'"
+//                         + "     else '일반요금'"
+//                         + " end"
+//                         + " from Member m";
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
+            
+            //coalesce : 하나씩 조회해서 null이 아니면 반환
+//            String query = "select coalesce(m.username, '이름 없는 회원') from Member m";
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
 
-            //JPQL 타입 표현
-//            String query = "select m.username, 'HELLO', true From Member m";
-
-            //Enum class 표현
-//            String query = "select m.username, 'HELLO', true From Member m " +
-//                           "where m.type = jpql.MemberType.USER";
-
-            //Enum class 파라미터
-            String query = "select m.username, 'HELLO', true From Member m " +
-                    "where m.type = :userType";
-            List<Object[]> result = em.createQuery(query)
-                    .setParameter("userType", MemberType.ADMIN)
-                    .getResultList();
-
-            for (Object[] objects : result) {
-                System.out.println("objects[0] = " + objects[0]);
-                System.out.println("objects[1] = " + objects[1]);
-                System.out.println("objects[2] = " + objects[2]);
+            //nullif : 두 값이 같으면 null 반환, 다르면 첫번째 값 반환
+            String query = "select nullif(m.username, 'member') from Member m";
+            List<String> result = em.createQuery(query, String.class).getResultList();
+            for (String s : result) {
+                System.out.println("s = " + s);
             }
 
 
