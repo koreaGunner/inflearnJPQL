@@ -183,27 +183,27 @@ public class JpaMain {
 
 
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
-
-            Member member = new Member();
-            member.setUsername("member");
-            member.setAge(10);
-            member.setType(MemberType.ADMIN);
-            member.changeTeam(team);
-
-            Member member1 = new Member();
-            member1.setUsername(null);
-            member1.setAge(20);
-            member1.setType(MemberType.USER);
-            member1.changeTeam(team);
-
-            em.persist(member);
-            em.persist(member1);
-
-            em.flush();
-            em.clear();
+//            Team team = new Team();
+//            team.setName("teamA");
+//            em.persist(team);
+//
+//            Member member = new Member();
+//            member.setUsername("member");
+//            member.setAge(10);
+//            member.setType(MemberType.ADMIN);
+//            member.changeTeam(team);
+//
+//            Member member1 = new Member();
+//            member1.setUsername(null);
+//            member1.setAge(20);
+//            member1.setType(MemberType.USER);
+//            member1.changeTeam(team);
+//
+//            em.persist(member);
+//            em.persist(member1);
+//
+//            em.flush();
+//            em.clear();
             
             //case문
 //            String query = "select "
@@ -226,11 +226,77 @@ public class JpaMain {
 //            }
 
             //nullif : 두 값이 같으면 null 반환, 다르면 첫번째 값 반환
-            String query = "select nullif(m.username, 'member') from Member m";
+//            String query = "select nullif(m.username, 'member') from Member m";
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+
+
+
+
+
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("member");
+            member.setAge(10);
+            member.setType(MemberType.ADMIN);
+            member.changeTeam(team);
+
+            Member member1 = new Member();
+            member1.setUsername("관리자");
+            member1.setAge(20);
+            member1.setType(MemberType.USER);
+            member1.changeTeam(team);
+
+            em.persist(member);
+            em.persist(member1);
+
+            em.flush();
+            em.clear();
+
+            //concat
+//            String query = "select concat('a', 'b') from Member m";
+//            String query = "select 'a' || 'b' from Member m";
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+            //substring
+//            String query = "select substring(m.username, 2, 3) from Member m";
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+            //locate
+//            String query = "select locate('de', 'abcdefg') from Member m";
+//            List<Integer> result = em.createQuery(query, Integer.class).getResultList();
+//            for (int s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+            //size
+//            String query = "select size(t.members) from Team t";
+//            List<Integer> result = em.createQuery(query, Integer.class).getResultList();
+//            for (int s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+
+            //group_concat(하이버네이트 함수)
+//            String query = "select function('group_concat', m.username) from Member m";
+            String query = "select group_concat(m.username) from Member m";
             List<String> result = em.createQuery(query, String.class).getResultList();
             for (String s : result) {
                 System.out.println("s = " + s);
             }
+
 
 
             tx.commit();
