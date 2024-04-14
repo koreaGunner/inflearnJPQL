@@ -2,6 +2,7 @@ package jpql;
 
 import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.List;
 
 public class JpaMain {
@@ -237,27 +238,27 @@ public class JpaMain {
 
 
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
-
-            Member member = new Member();
-            member.setUsername("member");
-            member.setAge(10);
-            member.setType(MemberType.ADMIN);
-            member.changeTeam(team);
-
-            Member member1 = new Member();
-            member1.setUsername("관리자");
-            member1.setAge(20);
-            member1.setType(MemberType.USER);
-            member1.changeTeam(team);
-
-            em.persist(member);
-            em.persist(member1);
-
-            em.flush();
-            em.clear();
+//            Team team = new Team();
+//            team.setName("teamA");
+//            em.persist(team);
+//
+//            Member member = new Member();
+//            member.setUsername("member");
+//            member.setAge(10);
+//            member.setType(MemberType.ADMIN);
+//            member.changeTeam(team);
+//
+//            Member member1 = new Member();
+//            member1.setUsername("관리자");
+//            member1.setAge(20);
+//            member1.setType(MemberType.USER);
+//            member1.changeTeam(team);
+//
+//            em.persist(member);
+//            em.persist(member1);
+//
+//            em.flush();
+//            em.clear();
 
             //concat
 //            String query = "select concat('a', 'b') from Member m";
@@ -291,13 +292,64 @@ public class JpaMain {
 
             //group_concat(하이버네이트 함수)
 //            String query = "select function('group_concat', m.username) from Member m";
-            String query = "select group_concat(m.username) from Member m";
+//            String query = "select group_concat(m.username) from Member m";
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+
+
+
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("member");
+            member.setAge(10);
+            member.setType(MemberType.ADMIN);
+            member.changeTeam(team);
+
+            Member member1 = new Member();
+            member1.setUsername("관리자");
+            member1.setAge(20);
+            member1.setType(MemberType.USER);
+            member1.changeTeam(team);
+
+            em.persist(member);
+            em.persist(member1);
+
+            em.flush();
+            em.clear();
+  
+              //단일 값 연관 경로
+//            String query = "select m.team from Member m"; //묵시적 내부조인(inner join) 발생, 추가 탐색 O
+//                                                          // -> 성능에 영향이 있기때문에 묵시적 내부조인 일어나게 쿼리를 짜면 안됨
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+
+            //컬렉션 값 연관 경로
+//            String query = "select t.members from Team t"; //묵시적 내부조인 발생, 추가 탐색 X
+//            List<List> result = em.createQuery(query, List.class).getResultList();
+//            for (List list : result) {
+//                System.out.println("list = " + list);
+//            }
+//            Collection result = em.createQuery(query, Collection.class).getResultList();
+//            System.out.println("result = " + result);
+//            for (Object o : result) {
+//                System.out.println("o = " + o);
+//            }
+            
+            //-> 해결방법(묵시적 조인을 쓰면 안되고 무조건 명시적 조인을 쓸 것)
+            String query = "select m.username from Team t join t.members m"; //from 절에서 명시적 조인을 통해 별칭을 얻으면 추가 탐색 가능
             List<String> result = em.createQuery(query, String.class).getResultList();
             for (String s : result) {
                 System.out.println("s = " + s);
             }
-
-
 
             tx.commit();
         } catch (Exception e) {
