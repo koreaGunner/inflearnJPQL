@@ -409,11 +409,43 @@ public class JpaMain {
 //                }
 //            }
 
-            //컬렉션 패치 조인(일대다 관계, 컬렉션 패치 조인)
+            //컬렉션 패치 조인(일대다 관계, 컬렉션 패치 조인) : 별칭을 안주는게 좋다
             // -> distinct(db에선 완전 똑같은 row일 때만 적용) 추가
             // -> 그러나 jpa가 어플리케이션 단계에서 한번 더 걸러준다(jpa distinct)
-            String query = "select distinct t from Team t join fetch t.members";
-            List<Team> result = em.createQuery(query, Team.class).getResultList();
+//            String query = "select distinct t from Team t join fetch t.members";
+//            List<Team> result = em.createQuery(query, Team.class).getResultList();
+//            for (Team team : result) {
+//                System.out.println("team.getName() = " + team.getName() + " || " + team.getMembers().size());
+//                for(Member member : team.getMembers()) {
+//                    System.out.println("-> member.getUsername() = " + member.getUsername());
+//                }
+//            }
+
+            //컬렉션 패치 조인 페이징 -> 실제 페이징 쿼리가 나가지않는다 -> 쓰면 안된다
+            //100만건이면 100만건 다 조회 후 페이징하므로 문제 생김
+            //일대일, 다대일 같은 단일 값 연관 필드들은 페치조인해도 페이징 가능
+//            String query = "select t from Team t join fetch t.members";
+//            List<Team> result = em.createQuery(query, Team.class)
+//                    .setFirstResult(0)
+//                    .setMaxResults(1)
+//                    .getResultList();
+//            for (Team team : result) {
+//                System.out.println("team.getName() = " + team.getName() + " || " + team.getMembers().size());
+//                for(Member member : team.getMembers()) {
+//                    System.out.println("-> member.getUsername() = " + member.getUsername());
+//                }
+//            }
+
+
+            //컬렉션 페치 조인 해결
+            //지연로딩 때문에 쿼리가 따로따로 나가는 부분을 @BatchSize로 해결 가능
+            String query = "select t from Team t";
+            List<Team> result = em.createQuery(query, Team.class)
+                    .setFirstResult(0)
+                    .setMaxResults(2)
+                    .getResultList();
+            System.out.println("result.size() = " + result.size());
+            
             for (Team team : result) {
                 System.out.println("team.getName() = " + team.getName() + " || " + team.getMembers().size());
                 for(Member member : team.getMembers()) {
