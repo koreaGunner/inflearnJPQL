@@ -354,6 +354,10 @@ public class JpaMain {
 //            }
 
 
+
+
+
+
             Team team1 = new Team();
             team1.setName("teamA");
             em.persist(team1);
@@ -439,19 +443,41 @@ public class JpaMain {
 
             //컬렉션 페치 조인 해결
             //지연로딩 때문에 쿼리가 따로따로 나가는 부분을 @BatchSize로 해결 가능
-            String query = "select t from Team t";
-            List<Team> result = em.createQuery(query, Team.class)
-                    .setFirstResult(0)
-                    .setMaxResults(2)
+//            String query = "select t from Team t";
+//            List<Team> result = em.createQuery(query, Team.class)
+//                    .setFirstResult(0)
+//                    .setMaxResults(2)
+//                    .getResultList();
+//            System.out.println("result.size() = " + result.size());
+//
+//            for (Team team : result) {
+//                System.out.println("team.getName() = " + team.getName() + " || " + team.getMembers().size());
+//                for(Member member : team.getMembers()) {
+//                    System.out.println("-> member.getUsername() = " + member.getUsername());
+//                }
+//            }
+
+
+            //엔티티 직접 사용
+//            String query = "select m from Member m where m = :member";
+//            Member findMember = em.createQuery(query, Member.class)
+//                    .setParameter("member", member1)
+//                    .getSingleResult();
+
+//            String query = "select m from Member m where m.id = :memberId";
+//            Member findMember = em.createQuery(query, Member.class)
+//                    .setParameter("memberId", member1.getId())
+//                    .getSingleResult();
+
+            //엔티티 직접 사용 - 외래 키 값
+            String query = "select m from Member m where m.team = :team";
+            List<Member> result = em.createQuery(query, Member.class)
+                    .setParameter("team", team1)
                     .getResultList();
-            System.out.println("result.size() = " + result.size());
-            
-            for (Team team : result) {
-                System.out.println("team.getName() = " + team.getName() + " || " + team.getMembers().size());
-                for(Member member : team.getMembers()) {
-                    System.out.println("-> member.getUsername() = " + member.getUsername());
-                }
-            }
+
+            System.out.println("result = " + result);
+
+
 
 
             tx.commit();
