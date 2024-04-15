@@ -24,6 +24,7 @@
             <!--<property name="hibernate.hbm2ddl.auto" value="update" />--> <!-- 변경분만 반영(컬럼 추가는 가능하나 삭제는 불가능) -->
             <!--<property name="hibernate.hbm2ddl.auto" value="validate" />--> <!-- 엔티티와 테이블이 정상 매핑되었는지만 확인(안됐을 시 오류) -->
             <!-- !!!!운영장비에는 절대 create, create-drop, update 사용하면 안된다!! -->
+            <property name="hibernate.default_batch_fetch_size" value="100"/> <!-- batch size 글로벌 세팅 -->
         </properties>
     </persistence-unit>
 
