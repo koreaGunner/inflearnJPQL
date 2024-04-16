@@ -479,13 +479,35 @@ public class JpaMain {
 
 
             //named쿼리
-            List<Member> result = em.createNamedQuery("Member.findByUsername", Member.class)
-                    .setParameter("username", "회원1")
-                    .getResultList();
-            for (Member member : result) {
-                System.out.println("member = " + member);
-            }
+//            List<Member> result = em.createNamedQuery("Member.findByUsername", Member.class)
+//                    .setParameter("username", "회원1")
+//                    .getResultList();
+//            for (Member member : result) {
+//                System.out.println("member = " + member);
+//            }
 
+            //flush 자동 호출함 -> commit, query, flush
+            //벌크연산 update
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
+            System.out.println("resultCount = " + resultCount);
+
+            //벌크연산 delete
+//            int resultCount = em.createQuery("delete Member m").executeUpdate();
+//            System.out.println("resultCount = " + resultCount);
+
+
+            //벌크연산 뒤에는 영속성 컨텍스트를 초기화해야한다(밑의 이유 때문)
+//            em.clear();
+
+            Member findMember1 = em.find(Member.class, member1.getId());
+            Member findMember2 = em.find(Member.class, member2.getId());
+            Member findMember3 = em.find(Member.class, member3.getId());
+
+            //앞에서 em.clear를 안했다면 update 되지 않은 나이가 나온다(영속성 컨텍스트에 1차 캐시가 남아있기때문)
+            System.out.println("member1 = " + findMember1.getAge());
+            System.out.println("member2 = " + findMember2.getAge());
+            System.out.println("member3 = " + findMember3.getAge());
 
 
             tx.commit();
