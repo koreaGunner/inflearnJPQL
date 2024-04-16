@@ -470,13 +470,21 @@ public class JpaMain {
 //                    .getSingleResult();
 
             //엔티티 직접 사용 - 외래 키 값
-            String query = "select m from Member m where m.team = :team";
-            List<Member> result = em.createQuery(query, Member.class)
-                    .setParameter("team", team1)
+//            String query = "select m from Member m where m.team = :team";
+//            List<Member> result = em.createQuery(query, Member.class)
+//                    .setParameter("team", team1)
+//                    .getResultList();
+//
+//            System.out.println("result = " + result);
+
+
+            //named쿼리
+            List<Member> result = em.createNamedQuery("Member.findByUsername", Member.class)
+                    .setParameter("username", "회원1")
                     .getResultList();
-
-            System.out.println("result = " + result);
-
+            for (Member member : result) {
+                System.out.println("member = " + member);
+            }
 
 
 
